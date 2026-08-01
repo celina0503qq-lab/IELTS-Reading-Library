@@ -2568,18 +2568,15 @@ function getViewName(viewName) {
 function updateSystemInfo() {
     const examIndexSnapshot = getExamIndexState();
     if (!examIndexSnapshot || examIndexSnapshot.length === 0) return;
-    const readingExams = examIndexSnapshot.filter(e => e.type === 'reading');
-    const listeningExams = examIndexSnapshot.filter(e => e.type === 'listening');
 
     const totalEl = document.getElementById('total-exams');
     if (totalEl) totalEl.textContent = examIndexSnapshot.length;
-    // These IDs might not exist anymore, but we'll add them for robustness
     const htmlExamsEl = document.getElementById('html-exams');
     const pdfExamsEl = document.getElementById('pdf-exams');
     const lastUpdateEl = document.getElementById('last-update');
 
-    if (htmlExamsEl) htmlExamsEl.textContent = readingExams.length + listeningExams.length; // Simplified
-    if (pdfExamsEl) pdfExamsEl.textContent = examIndexSnapshot.filter(e => e.pdfFilename).length;
+    if (htmlExamsEl) htmlExamsEl.textContent = examIndexSnapshot.filter(e => e.hasHtml || (e.filename && e.filename.length > 0)).length;
+    if (pdfExamsEl) pdfExamsEl.textContent = examIndexSnapshot.filter(e => e.hasPdf || e.pdfFilename).length;
     if (lastUpdateEl) lastUpdateEl.textContent = new Date().toLocaleString();
 }
 

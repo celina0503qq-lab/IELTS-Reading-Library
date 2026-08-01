@@ -168,13 +168,67 @@
                 </div>
 
                 <div class="hero-panel hero-section">
+                    <h3>☁️ 云同步</h3>
+                    <p class="hero-panel__muted">跨设备同步练习记录 - 手机电脑数据互通</p>
+
+                    <!-- 未配置状态：输入Token和Repo -->
+                    <div id="cloud-sync-config" style="margin-top: 15px;">
+                        <div style="margin-bottom: 10px;">
+                            <input type="password" id="cloud-sync-token-input" placeholder="GitHub Token (ghp_xxx...)"
+                                style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); margin-bottom: 8px; box-sizing: border-box;">
+                            <input type="text" id="cloud-sync-repo-input" placeholder="owner/repo (如 celina0503qq-lab/IELTS-Reading-Library)"
+                                style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.15); box-sizing: border-box;">
+                        </div>
+                        <button class="btn btn-primary hero-btn" id="cloud-sync-connect-btn"
+                            style="background: #646b20ff; border-color: #646b20ff;">
+                            🔗 连接
+                        </button>
+                        <p style="font-size: 0.85em; opacity: 0.7; margin-top: 8px;">
+                            需要一个有 repo 权限的 GitHub Token。<br>
+                            <a href="https://github.com/settings/tokens" target="_blank" style="color: inherit;">点击创建 Token</a> - 勾选 repo 权限即可
+                        </p>
+                    </div>
+
+                    <!-- 已配置状态：显示同步操作 -->
+                    <div id="cloud-sync-connected" style="display: none; margin-top: 15px;">
+                        <div style="margin-bottom: 12px; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.05);">
+                            <span style="font-weight: bold;">📂 仓库:</span> <span id="cloud-sync-repo-name"></span><br>
+                            <span style="font-weight: bold;">🕐 上次同步:</span> <span id="cloud-sync-last-time">从未</span>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                            <button class="btn btn-primary hero-btn" id="cloud-sync-sync-btn"
+                                style="background: #10b981; border-color: #10b981;">
+                                🔄 智能同步
+                            </button>
+                            <button class="btn hero-btn" id="cloud-sync-push-btn"
+                                style="background: #3b82f6; border-color: #3b82f6; color: white;">
+                                ⬆️ 上传
+                            </button>
+                            <button class="btn hero-btn" id="cloud-sync-pull-btn"
+                                style="background: #8b5cf6; border-color: #8b5cf6; color: white;">
+                                ⬇️ 下载
+                            </button>
+                            <button class="btn btn-warning hero-btn hero-btn--warn" id="cloud-sync-disconnect-btn">
+                                ❌ 断开
+                            </button>
+                        </div>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="cloud-sync-auto-toggle" style="width: 18px; height: 18px;">
+                            <span>自动同步 (每30秒检查一次)</span>
+                        </label>
+                    </div>
+
+                    <div id="cloud-sync-status" style="margin-top: 10px; font-size: 0.9em; color: #6b7280;"></div>
+                </div>
+
+                <div class="hero-panel hero-section">
                     <h3>📊 系统信息</h3>
                     <div class="hero-surface" style="margin-top: 15px; line-height: 1.8; font-weight: bold;">
                         <div style="color: #10b981;">题库状态: 已加载完整索引</div>
-                        <div>题目总数: <span id="total-exams">389</span></div>
-                        <div>HTML题目: <span id="html-exams">387</span></div>
-                        <div>PDF题目: <span id="pdf-exams">344</span></div>
-                        <div>最后更新: <span id="last-update">2025/12/13 21:03:12</span></div>
+                        <div>题目总数: <span id="total-exams">193</span></div>
+                        <div>HTML题目: <span id="html-exams">129</span></div>
+                        <div>PDF题目: <span id="pdf-exams">193</span></div>
+                        <div>最后更新: <span id="last-update">2026/08/01</span></div>
                     </div>
 
                     <!-- 主题切换按钮 -->
@@ -442,6 +496,7 @@
     <script src="js/utils/logger.js"></script>
     <script src="js/utils/storage.js"></script>
     <script src="js/core/storageProviderRegistry.js"></script>
+    <script src="js/services/cloudSync.js"></script>
     <script src="js/data/dataSources/storageDataSource.js"></script>
     <script src="js/data/repositories/baseRepository.js"></script>
     <script src="js/data/repositories/dataRepositoryRegistry.js"></script>

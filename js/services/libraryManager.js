@@ -291,9 +291,57 @@
             }
             try { global.updateOverview && global.updateOverview(); } catch (_) { }
             try { global.refreshBrowseProgressFromRecords && global.refreshBrowseProgressFromRecords(); } catch (_) { }
+            try { global.updateSystemInfo && global.updateSystemInfo(); } catch (_) { }
+
+            // 直接渲染总览卡片（不依赖 main.js 的 updateOverview）
+            try {
+                const list = typeof global.getExamIndexState === 'function' ? global.getExamIndexState() : [];
+                if (Array.isArray(list) && list.length > 0) {
+                    const statsService = global.AppServices && global.AppServices.overviewStats;
+                    const OverviewView = global.AppViews && global.AppViews.OverviewView;
+                    const container = document.getElementById('category-overview');
+                    if (statsService && OverviewView && container) {
+                        if (!global._overviewViewInstance) {
+                            global._overviewViewInstance = new OverviewView({ containerSelector: '#category-overview' });
+                        }
+                        const stats = statsService.calculate(list);
+                        global._overviewViewInstance.render(stats, {
+                            container,
+                            actions: {
+                                onBrowseCategory: function (category, type, filterMode, path) {
+                                    if (typeof global.browseCategory === 'function') {
+                                        global.browseCategory(category, type, filterMode, path);
+                                    } else {
+                                        try { global.__pendingBrowseFilter = { category: category || 'all', type: type || 'all', filterMode: filterMode || null, path: path || null }; } catch (_) { }
+                                        if (typeof global.showView === 'function') { global.showView('browse', false); }
+                                    }
+                                },
+                                onRandomPractice: function (category, type, filterMode, path) {
+                                    if (global.AppActions && typeof global.AppActions.startRandomPractice === 'function') {
+                                        global.AppActions.startRandomPractice(category, type, filterMode, path);
+                                    }
+                                },
+                                onStartSuite: function () {
+                                    if (global.AppActions && typeof global.AppActions.startSuitePractice === 'function') {
+                                        global.AppActions.startSuitePractice();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            } catch (_) { }
+
             try {
                 global.dispatchEvent(new CustomEvent('examIndexLoaded'));
             } catch (_) { }
+
+            // 延迟重试：确保 browse-runtime 加载后也能刷新总览
+            setTimeout(function () {
+                try { global.updateOverview && global.updateOverview(); } catch (_) { }
+                try { global.updateSystemInfo && global.updateSystemInfo(); } catch (_) { }
+            }, 2000);
+
             return loadTime;
         }
 
